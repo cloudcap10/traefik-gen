@@ -107,16 +107,16 @@ cd traefik-gen`} />
           </Step>
 
           {/* Step 3 */}
-          <Step num={3} icon={<Lock size={14} />} title="Configure Traefik (already set up in traefik-base/)">
+          <Step num={3} icon={<Lock size={14} />} title="Configure Traefik (already set up in traefik/)">
             <p className="text-xs text-slate-500 mb-1">
-              The Traefik config is ready in <code className="bg-slate-100 px-1 rounded font-mono">traefik-base/</code>. You just need to fill in two things:
+              The Traefik config is ready in <code className="bg-slate-100 px-1 rounded font-mono">traefik/</code>. You just need to fill in two things:
             </p>
             <div className="space-y-3 mt-2">
               <div>
                 <p className="text-[11px] font-semibold text-slate-600 uppercase tracking-wide mb-1">
                   a) Add your Cloudflare API Token
                 </p>
-                <CodeBlock code={`cd traefik-base
+                <CodeBlock code={`cd traefik
 cp cf-token.example cf-token
 nano cf-token        # Paste your Cloudflare DNS API token here`} />
                 <p className="text-[11px] text-slate-400 mt-1">
@@ -125,7 +125,7 @@ nano cf-token        # Paste your Cloudflare DNS API token here`} />
               </div>
               <div>
                 <p className="text-[11px] font-semibold text-slate-600 uppercase tracking-wide mb-1">
-                  b) Set your email in traefik-base/config/traefik.yaml
+                  b) Set your email in traefik/config/traefik.yaml
                 </p>
                 <CodeBlock code={`nano config/traefik.yaml
 # Change this line:
