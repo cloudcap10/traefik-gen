@@ -14,6 +14,8 @@ services:
       - no-new-privileges:true
     secrets:
       - cf-token
+    networks:
+      - default
     ports:
       - 80:80
       - 443:443
@@ -39,7 +41,3 @@ services:
       - "traefik.http.routers.traefik-secure.tls=true"
       - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
       - "traefik.http.routers.traefik-secure.service=api@internal"
-
-networks:
-  traefik-net:
-    external: true

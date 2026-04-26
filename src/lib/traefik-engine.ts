@@ -7,10 +7,9 @@ export function injectTraefikLabels(composeObj: any, config: any) {
     include: ["../compose-common.yml"]
   };
 
+  // Copy other keys
   Object.keys(composeObj).forEach(key => {
-    if (key !== 'include') {
-      result[key] = composeObj[key];
-    }
+    if (key !== 'include') result[key] = composeObj[key];
   });
   
   const firstServiceName = Object.keys(result.services)[0];
@@ -33,24 +32,22 @@ export function injectTraefikLabels(composeObj: any, config: any) {
   ];
 
   // 3. CLEANUP: Strip legacy ports
-  if (service.ports) {
-    delete service.ports;
-  }
+  if (service.ports) delete service.ports;
 
-  // 4. Update Environment DOMAIN
+  // 4. Force DOMAIN to be the variable ${DOMAIN}
   if (service.environment) {
-    if (typeof service.environment === 'object' && !Array.isArray(service.environment)) {
-      const domainKey = Object.keys(service.environment).find(k => k.toUpperCase() === 'DOMAIN');
-      if (domainKey) {
-        service.environment[domainKey] = "${DOMAIN}";
-      }
-    } else if (Array.isArray(service.environment)) {
-      service.environment = service.environment.map((item: any) => {
-        if (typeof item === 'string' && item.toUpperCase().startsWith('DOMAIN=')) {
+    if (Array.isArray(service.environment)) {
+      service.environment = service.environment.map((item: string) => {
+        if (item.toUpperCase().includes('DOMAIN=')) {
           return "DOMAIN=${DOMAIN}";
         }
         return item;
       });
+    } else if (typeof service.environment === 'object') {
+      const dKey = Object.keys(service.environment).find(k => k.toUpperCase() === 'DOMAIN');
+      if (dKey) {
+        service.environment[dKey] = "${DOMAIN}";
+      }
     }
   }
 
@@ -65,7 +62,10 @@ export function injectTraefikLabels(composeObj: any, config: any) {
   
   service.labels = labels;
   
-  if (service.networks) delete service.networks;
+  // 6. Restore explicit network connection (even with include)
+  service.networks = ["default"];
+  
+  // Clean up any other network definitions
   if (result.networks) delete result.networks;
   
   return result;
