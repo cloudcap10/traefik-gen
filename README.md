@@ -57,3 +57,4 @@ Enter your **Primary Domain** (e.g., `example.com`) and your **DNS Resolver** na
 This app is optimized for deployment on Cloudflare Pages. Simply connect your GitHub repository to Cloudflare Pages and use the following settings:
 - **Build Command:** `npm run build`
 - **Output Directory:** `dist`
+ 
