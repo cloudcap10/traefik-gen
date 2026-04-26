@@ -12,6 +12,7 @@ services:
       - 443:443
     environment:
       - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN} # Your Cloudflare API Token
+      - DOMAIN=${DOMAIN}
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -21,7 +22,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.api.rule=Host(`traefik.${DOMAIN}`)"
       - "traefik.http.routers.api.service=api@internal"
-      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.entrypoints=https"
       - "traefik.http.routers.api.tls.certresolver=cloudflare"
 
 networks:

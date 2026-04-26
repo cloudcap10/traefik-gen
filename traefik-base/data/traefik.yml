@@ -2,9 +2,14 @@ api:
   dashboard: true
 
 entryPoints:
-  web:
+  http:
     address: :80
-  websecure:
+    http:
+      redirections:
+        entryPoint:
+          to: https
+          scheme: https
+  https:
     address: :443
 
 certificatesResolvers:
