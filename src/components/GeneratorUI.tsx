@@ -102,7 +102,7 @@ const GeneratorUI: React.FC = () => {
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">DNS Resolver</label>
+          <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">SSL Resolver (Let's Encrypt)</label>
           <input
             type="text"
             value={resolver}
