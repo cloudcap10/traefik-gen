@@ -115,7 +115,6 @@ export function injectTraefikLabels(composeObj: any, config: TraefikConfig) {
     service.security_opt.push('no-new-privileges:true');
   }
   service.labels = labels;
-  service.networks = ['default'];
 
   return result;
 }
