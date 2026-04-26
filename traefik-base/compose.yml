@@ -1,3 +1,6 @@
+include:
+  - ../compose-common.yml
+
 secrets:
   cf-token:
     file: ./cf-token
@@ -36,7 +39,3 @@ services:
       - "traefik.http.routers.traefik-secure.tls=true"
       - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
       - "traefik.http.routers.traefik-secure.service=api@internal"
-
-networks:
-  traefik-net:
-    external: true
