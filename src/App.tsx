@@ -1,4 +1,5 @@
 import GeneratorUI from './components/GeneratorUI';
+import { Documentation } from './components/Documentation';
 
 function App() {
   return (
@@ -17,11 +18,14 @@ function App() {
         </div>
       </header>
       
-      <main className="flex-grow max-w-7xl mx-auto w-full p-8 flex flex-col overflow-hidden">
-        <GeneratorUI />
+      <main className="flex-grow max-w-7xl mx-auto w-full p-8 flex flex-col overflow-y-auto">
+        <div className="flex flex-col space-y-8">
+          <GeneratorUI />
+          <Documentation />
+        </div>
       </main>
 
-      <footer className="bg-white border-t border-gray-200 py-4 px-8 text-center text-xs text-gray-400">
+      <footer className="bg-white border-t border-gray-200 py-4 px-8 text-center text-xs text-gray-400 mt-auto">
         &copy; {new Date().getFullYear()} TraefikGen Engine. Stitch-Ready UI.
       </footer>
     </div>
