@@ -4,7 +4,7 @@ on:
   push:
     branches: [ master ]
     paths:
-      - '**/docker-compose.yml'
+      - '**/compose.yml'
 
 jobs:
   deploy:
@@ -24,7 +24,7 @@ jobs:
             git pull origin master
             # Identify which folders changed and restart them
             for folder in $(git diff --name-only HEAD~1 | cut -d/ -f1 | sort -u); do
-              if [ -f "$folder/docker-compose.yml" ]; then
+              if [ -f "$folder/compose.yml" ]; then
                 echo "Deploying update to $folder..."
                 cd $folder
                 docker-compose up -d --remove-orphans

@@ -14,7 +14,7 @@ export const Documentation: React.FC = () => {
           </p>
           <ul className="list-disc ml-6 mt-2 text-sm text-gray-600">
             <li>Create the network: <code className="bg-gray-100 px-1 rounded">docker network create traefik-net</code></li>
-            <li>Deploy Traefik using the provided <code className="bg-gray-100 px-1 rounded">docker-compose.yml</code>.</li>
+            <li>Deploy Traefik using the provided <code className="bg-gray-100 px-1 rounded">compose.yml</code>.</li>
           </ul>
         </section>
 
@@ -23,7 +23,7 @@ export const Documentation: React.FC = () => {
           <p className="text-gray-600 mt-1">You have two ways to generate configs:</p>
           <ul className="list-disc ml-6 mt-2 text-sm text-gray-600">
             <li><strong>Manual:</strong> Enter the App Name, Image, and Port in the form.</li>
-            <li><strong>Transform:</strong> Paste a raw <code className="bg-gray-100 px-1 rounded">docker-compose.yml</code> from the internet. The tool will inject your labels and strip secrets automatically.</li>
+            <li><strong>Transform:</strong> Paste a raw <code className="bg-gray-100 px-1 rounded">compose.yml</code> from the internet. The tool will inject your labels and strip secrets automatically.</li>
           </ul>
         </section>
 

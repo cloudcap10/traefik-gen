@@ -12,7 +12,7 @@ export interface GitHubPushConfig {
 export async function pushToGitHub(
   config: GitHubPushConfig,
   content: string,
-  message: string = 'feat: update docker-compose.yml via TraefikGen'
+  message: string = 'feat: update compose.yml via TraefikGen'
 ) {
   const { token, owner, repo, path } = config;
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;

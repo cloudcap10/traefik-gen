@@ -1,14 +1,21 @@
 export function injectTraefikLabels(composeObj: any, config: any) {
   const { appName, domain, port, resolver = 'cloudflare' } = config;
   
-  // Since we now have a GLOBAL redirect in traefik.yml, 
-  // apps only need ONE router on the HTTPS entrypoint.
   const labels = [
     "traefik.enable=true",
-    `traefik.http.routers.${appName}.entrypoints=https`,
+    // HTTP Router & Redirect
+    `traefik.http.routers.${appName}.entrypoints=http`,
     `traefik.http.routers.${appName}.rule=Host(\`${appName}.${domain}\`)`,
-    `traefik.http.routers.${appName}.tls=true`,
-    `traefik.http.routers.${appName}.tls.certresolver=${resolver}`,
+    `traefik.http.middlewares.${appName}-https-redirect.redirectscheme.scheme=https`,
+    `traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https`,
+    `traefik.http.routers.${appName}.middlewares=${appName}-https-redirect`,
+    // HTTPS Router
+    `traefik.http.routers.${appName}-secure.entrypoints=https`,
+    `traefik.http.routers.${appName}-secure.rule=Host(\`${appName}.${domain}\`)`,
+    `traefik.http.routers.${appName}-secure.tls=true`,
+    `traefik.http.routers.${appName}-secure.tls.certresolver=${resolver}`,
+    `traefik.http.routers.${appName}-secure.service=${appName}`,
+    // Service Port
     `traefik.http.services.${appName}.loadbalancer.server.port=${port}`,
     "traefik.docker.network=traefik-net"
   ];

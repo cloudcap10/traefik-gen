@@ -26,7 +26,7 @@ const GeneratorUI: React.FC = () => {
   const [ghToken, setGhToken] = useState('');
   const [ghOwner, setGhOwner] = useState('');
   const [ghRepo, setGhRepo] = useState('');
-  const [ghPath, setGhPath] = useState('docker-compose.yml');
+  const [ghPath, setGhPath] = useState('compose.yml');
   const [pushStatus, setPushStatus] = useState<{ type: 'success' | 'error' | 'loading' | null, message: string }>({ type: null, message: '' });
 
   useEffect(() => {
@@ -198,7 +198,7 @@ const GeneratorUI: React.FC = () => {
             value={inputYaml}
             onChange={(e) => setInputYaml(e.target.value)}
             className="flex-grow w-full p-4 font-mono text-sm border border-gray-300 rounded-lg shadow-inner focus:ring-blue-500 focus:border-blue-500 resize-none bg-gray-50"
-            placeholder="Paste your docker-compose.yml here..."
+            placeholder="Paste your compose.yml here..."
           />
         </div>
         <div className="flex flex-col h-full">

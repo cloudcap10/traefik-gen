@@ -1,6 +1,6 @@
 # TraefikGen 🚀
 
-TraefikGen is a specialized web tool for automating the generation of Traefik-ready and GitHub-safe `docker-compose.yml` files.
+TraefikGen is a specialized web tool for automating the generation of Traefik-ready and GitHub-safe `compose.yml` files.
 
 ---
 
@@ -28,7 +28,7 @@ docker network create traefik-net
 Now that Traefik is running, use our web tool to generate "App" configs.
 **Live Tool:** [https://cloudcap10.github.io/traefik-gen/](https://cloudcap10.github.io/traefik-gen/)
 
-1. Paste any `docker-compose.yml` you find on the internet into the tool.
+1. Paste any `compose.yml` you find on the internet into the tool.
 2. The tool automatically adds the labels that tell the "Engine" (from Step 1) how to route traffic and get SSL certs.
 3. Push the result to GitHub.
 
