@@ -3,3 +3,10 @@ dist
 .vscode
 .DS_Store
 *.local
+
+# Secrets — never commit real credentials
+.env
+.env.*
+!.env.example
+traefik/cf-token
+traefik/config/acme.json
