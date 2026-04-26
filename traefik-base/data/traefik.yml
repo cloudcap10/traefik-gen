@@ -1,30 +1,54 @@
 api:
   dashboard: true
+  debug: true
 
 entryPoints:
   http:
-    address: :80
+    address: ":80"
     http:
       redirections:
-        entryPoint:
+        entrypoint:
           to: https
           scheme: https
   https:
-    address: :443
+    address: ":443"
 
-certificatesResolvers:
-  cloudflare:
-    acme:
-      email: your-email@example.com
-      storage: acme.json
-      dnsChallenge:
-        provider: cloudflare
-        resolvers:
-          - 1.1.1.1:53
-          - 8.8.8.8:53
+serversTransport:
+  insecureSkipVerify: true
 
 providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
-    network: traefik-net
+  file:
+    filename: /config.yaml
+
+certificatesResolvers:
+  cloudflare:
+    acme:
+      caServer: https://acme-v02.api.letsencrypt.org/directory
+      email: joven.talasan@gmail.com
+      storage: acme.json
+      dnsChallenge:
+        provider: cloudflare
+        resolvers:
+          - "1.1.1.1:53"
+          - "1.0.0.1:53"
+
+metrics:
+  prometheus:
+    addEntryPointsLabels: true
+    addRoutersLabels: true
+    addServicesLabels: true
+
+accessLog:
+  filePath: "/log/access.log"
+  format: json
+  fields:
+    defaultMode: keep
+    names:
+      StartUTC: drop
+
+log:
+  filePath: "/log/traefik.log"
+  format: json

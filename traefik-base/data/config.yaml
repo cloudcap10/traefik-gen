@@ -1,0 +1,13 @@
+# Dynamic configuration for A+ SSL rating
+http:
+  middlewares:
+    secure-headers:
+      headers:
+        sslRedirect: true
+        forceSTSHeader: true
+        stsSeconds: 63072000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        referrerPolicy: "same-origin"
+        browserXssFilter: true
+        contentTypeNosniff: true
