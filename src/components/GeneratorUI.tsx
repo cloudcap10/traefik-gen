@@ -186,7 +186,10 @@ export default function GeneratorUI() {
         port: effectivePort,
       };
       const modified = injectTraefikLabels(cloned, config);
-      setOutputYaml(yaml.dump(modified, { lineWidth: -1 }));
+      const raw = yaml.dump(modified, { lineWidth: -1 });
+      // js-yaml renders empty named volumes/networks as `key: null` — strip to `key:`
+      const cleaned = raw.replace(/^( {2}[\w-]+): null$/gm, '$1:');
+      setOutputYaml(cleaned);
     } catch {
       // Silent — keep output blank, don't show any error to user
       setOutputYaml('');
