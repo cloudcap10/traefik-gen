@@ -2,20 +2,33 @@ export function injectTraefikLabels(composeObj: any, config: any) {
   const { appName, domain, port, resolver = 'cloudflare' } = config;
   const fullDomain = `${appName}.${domain}`;
   
-  // 1. Construct a fresh object to GUARANTEE 'include' is on the very first line
+  // 1. Standardize input: Ensure we have a services object
+  let services = composeObj.services;
+  if (!services && composeObj) {
+    // If user pasted just the service definition without 'services:' key
+    services = composeObj;
+  }
+
+  // 2. Construct a fresh object to GUARANTEE 'include' is at the absolute top
   const result: any = {
-    include: ["../compose-common.yml"]
+    include: ["../compose-common.yml"],
+    services: services
   };
 
-  // Copy other keys
+  // Copy other top-level keys (volumes, etc) except include/services
   Object.keys(composeObj).forEach(key => {
-    if (key !== 'include') result[key] = composeObj[key];
+    if (key !== 'include' && key !== 'services') {
+      result[key] = composeObj[key];
+    }
   });
   
-  const firstServiceName = Object.keys(result.services)[0];
-  const service = result.services[firstServiceName];
+  const serviceNames = Object.keys(result.services);
+  if (serviceNames.length === 0) return result;
+  
+  // Apply labels to the primary service
+  const service = result.services[serviceNames[0]];
 
-  // 2. Traefik Labels
+  // 3. Traefik Labels (Your Production Pattern)
   const labels = [
     "traefik.enable=true",
     `traefik.http.routers.${appName}.entrypoints=http`,
@@ -31,27 +44,23 @@ export function injectTraefikLabels(composeObj: any, config: any) {
     "traefik.docker.network=traefik-net"
   ];
 
-  // 3. CLEANUP: Strip legacy ports
+  // 4. CLEANUP: Strip legacy ports
   if (service.ports) delete service.ports;
 
-  // 4. Force DOMAIN to be the variable ${DOMAIN}
+  // 5. Force DOMAIN to be the variable ${DOMAIN} (Scrub hardcoded URLs)
   if (service.environment) {
     if (Array.isArray(service.environment)) {
       service.environment = service.environment.map((item: string) => {
-        if (item.toUpperCase().includes('DOMAIN=')) {
-          return "DOMAIN=${DOMAIN}";
-        }
+        if (item.toUpperCase().startsWith('DOMAIN=')) return "DOMAIN=${DOMAIN}";
         return item;
       });
     } else if (typeof service.environment === 'object') {
       const dKey = Object.keys(service.environment).find(k => k.toUpperCase() === 'DOMAIN');
-      if (dKey) {
-        service.environment[dKey] = "${DOMAIN}";
-      }
+      if (dKey) service.environment[dKey] = "${DOMAIN}";
     }
   }
 
-  // 5. Production Hardening
+  // 6. Production Hardening
   service.container_name = appName;
   service.hostname = appName;
   service.restart = "unless-stopped";
@@ -61,12 +70,7 @@ export function injectTraefikLabels(composeObj: any, config: any) {
   }
   
   service.labels = labels;
-  
-  // 6. Restore explicit network connection (even with include)
   service.networks = ["default"];
-  
-  // Clean up any other network definitions
-  if (result.networks) delete result.networks;
   
   return result;
 }
