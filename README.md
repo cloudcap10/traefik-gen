@@ -1,43 +1,40 @@
 # TraefikGen 🚀
 
-TraefikGen is a specialized web tool for automating the generation of Traefik-ready and GitHub-safe `compose.yml` files.
+The ultimate "Source of Truth" template for your Home Lab. Move from manual edits to an automated **GitOps** workflow.
 
 ---
 
-## 🚦 Beginner's Guide: Zero to Traefik
+## 🚦 Quick Start Guide (For New Users)
 
-If you are a beginner, follow these steps in order to get your server running.
+### 1. On your Server (VPS)
+1. **Clone your new repo:** `git clone <your-repo-url>`
+2. **Create the network:** `docker network create traefik-net`
+3. **Configure Traefik:**
+   - Go to `traefik-base/`.
+   - Copy `.env.example` to `.env` and fill it in.
+   - Copy `cf-token.example` to `cf-token` and paste your Cloudflare API token.
+   - Edit `config/traefik.yaml` and put your real email.
+4. **Start the Engine:** `docker compose up -d`
 
-### Step 0: Create the Network
-Traefik and your apps need a "private hallway" to talk to each other.
+### 2. Setup Auto-Deployment
+Run this command once to let your server check GitHub for updates every minute:
 ```bash
-docker network create traefik-net
+(crontab -l 2>/dev/null; echo "* * * * * $(pwd)/auto-deploy.sh >> $(pwd)/deploy.log 2>&1") | crontab -
 ```
 
-### Step 1: Deploy the "Engine" (Traefik)
-1. Go to the `traefik-base` folder in this repo.
-2. Edit `data/traefik.yml` and change `your-email@example.com` to your real email.
-3. Create a `.env` file in that folder:
-   ```env
-   CF_DNS_API_TOKEN=your_cloudflare_token_here
-   DOMAIN=yourdomain.com
-   ```
-4. Run it: `docker-compose up -d`
+### 3. Use the Web Generator
+**Open the Tool:** [https://cloudcap10.github.io/traefik-gen/](https://cloudcap10.github.io/traefik-gen/)
 
-### Step 2: Use the TraefikGen Web Tool
-Now that Traefik is running, use our web tool to generate "App" configs.
-**Live Tool:** [https://cloudcap10.github.io/traefik-gen/](https://cloudcap10.github.io/traefik-gen/)
+1. **Paste** a compose file you found online.
+2. **Personalize** the App Name.
+3. **DNS:** Point your subdomain to your VPS IP in Cloudflare.
+4. **Push:** Click "Push to GitHub". 
 
-1. Paste any `compose.yml` you find on the internet into the tool.
-2. The tool automatically adds the labels that tell the "Engine" (from Step 1) how to route traffic and get SSL certs.
-3. Push the result to GitHub.
+**Result:** Your server will see the update and start the app automatically within 60 seconds!
 
 ---
 
-## 🛠 Prerequisites Summary
-- A Cloudflare account (for DNS-based SSL).
-- A VPS with Docker and Docker Compose installed.
-- The `traefik-net` network created.
-
 ## 🔒 Security
-TraefikGen automatically strips your passwords and tokens from the `environment:` section and replaces them with variables (e.g., ${DB_PASSWORD}) so you can safely share your configs on GitHub!
+- **Docker Secrets:** Your Cloudflare token is stored in a secure file, not an environment variable.
+- **Hardened:** All apps automatically get `no-new-privileges` and A+ Security Headers.
+- **Secret Stripping:** The web tool hides your passwords before they reach GitHub.
