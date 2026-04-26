@@ -1,7 +1,4 @@
-# Global Reference File for all Docker Stacks
 networks:
-  traefik-net:
+  default:
     name: traefik-net
     external: true
-
-# You can add common logging or security headers here

@@ -6,16 +6,19 @@ export function injectTraefikLabels(composeObj: any, config: any) {
   
   const labels = [
     "traefik.enable=true",
+    // HTTP Router & Redirect
     `traefik.http.routers.${appName}.entrypoints=http`,
     `traefik.http.routers.${appName}.rule=Host(\`${appName}.${domain}\`)`,
     `traefik.http.middlewares.${appName}-https-redirect.redirectscheme.scheme=https`,
     `traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https`,
     `traefik.http.routers.${appName}.middlewares=${appName}-https-redirect`,
+    // HTTPS Router
     `traefik.http.routers.${appName}-secure.entrypoints=https`,
     `traefik.http.routers.${appName}-secure.rule=Host(\`${appName}.${domain}\`)`,
     `traefik.http.routers.${appName}-secure.tls=true`,
     `traefik.http.routers.${appName}-secure.tls.certresolver=${resolver}`,
     `traefik.http.routers.${appName}-secure.service=${appName}`,
+    // Service Definition
     `traefik.http.services.${appName}.loadbalancer.server.port=${port}`,
     "traefik.docker.network=traefik-net"
   ];
@@ -33,10 +36,10 @@ export function injectTraefikLabels(composeObj: any, config: any) {
   
   service.labels = labels;
   
-  // The network is now handled by the 'include' reference
-  service.networks = ['traefik-net'];
-  
-  // Remove local network definition as it's now in compose-common.yml
+  // Clean up: remove explicit network definitions as they are handled by the 'default' network in 'include'
+  if (service.networks) {
+    delete service.networks;
+  }
   if (composeObj.networks) {
     delete composeObj.networks;
   }
