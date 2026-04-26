@@ -26,7 +26,7 @@ function App() {
       </main>
 
       <footer className="bg-white border-t border-gray-200 py-4 px-8 text-center text-xs text-gray-400 mt-auto">
-        &copy; {new Date().getFullYear()} TraefikGen Engine. Stitch-Ready UI.
+        &copy; {new Date().getFullYear()} TraefikGen Engine. Stitch-Ready UI. Build: 13:59
       </footer>
     </div>
   )
