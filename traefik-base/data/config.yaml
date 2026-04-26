@@ -17,9 +17,9 @@ http:
       redirectScheme:
         scheme: https
         permanent: true
-    # Added your production auth templates for reference
     grist-basic-auth:
       basicAuth:
         headerField: "X-Forwarded-User"
+        # Placeholder for security
         users:
-          - "joven.talasan@gmail.com:$2y$05$XlJlJelSHROkdATS7z7LTuhZ21YwJCX8jfZOYnp6ss5cmTHdLzfXS"
+          - "user:hashed_password_here"

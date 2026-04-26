@@ -27,7 +27,7 @@ certificatesResolvers:
   cloudflare:
     acme:
       caServer: https://acme-v02.api.letsencrypt.org/directory
-      email: joven.talasan@gmail.com
+      email: YOUR_EMAIL@EXAMPLE.COM
       storage: acme.json
       dnsChallenge:
         provider: cloudflare
