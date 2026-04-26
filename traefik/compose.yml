@@ -1,0 +1,43 @@
+include:
+  - ../compose-common.yml
+
+secrets:
+  cf-token:
+    file: ./cf-token
+
+services:
+  traefik:
+    image: traefik:latest
+    container_name: jttraefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    secrets:
+      - cf-token
+    networks:
+      - default
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - TRAEFIK_DASHBOARD_CREDENTIALS=${TRAEFIK_DASHBOARD_CREDENTIALS}
+      - CF_DNS_API_TOKEN_FILE=/run/secrets/cf-token
+      - DOMAIN=${DOMAIN}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config/traefik.yaml:/traefik.yaml:ro
+      - ./config/acme.json:/acme.json
+      - ./config/config.yaml:/config.yaml:ro
+      - ./logs:/log
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.entrypoints=http"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN}`)"
+      - "traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.traefik.middlewares=traefik-https-redirect"
+      - "traefik.http.routers.traefik-secure.entrypoints=https"
+      - "traefik.http.routers.traefik-secure.rule=Host(`traefik.${DOMAIN}`)"
+      - "traefik.http.routers.traefik-secure.tls=true"
+      - "traefik.http.routers.traefik-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.traefik-secure.service=api@internal"
