@@ -2,13 +2,22 @@ export function injectTraefikLabels(composeObj: any, config: any) {
   const { appName, domain, port, resolver = 'cloudflare' } = config;
   const fullDomain = `${appName}.${domain}`;
   
-  // 1. Ensure Global include
-  composeObj.include = ["../compose-common.yml"];
-  
-  const firstServiceName = Object.keys(composeObj.services)[0];
-  const service = composeObj.services[firstServiceName];
+  // 1. Construct a fresh object to GUARANTEE 'include' is on the very first line
+  const result: any = {
+    include: ["../compose-common.yml"]
+  };
 
-  // 2. Traefik Labels
+  // 2. Copy over all other top-level keys from the original (except include)
+  Object.keys(composeObj).forEach(key => {
+    if (key !== 'include') {
+      result[key] = composeObj[key];
+    }
+  });
+  
+  const firstServiceName = Object.keys(result.services)[0];
+  const service = result.services[firstServiceName];
+
+  // 3. Traefik Labels
   const labels = [
     "traefik.enable=true",
     `traefik.http.routers.${appName}.entrypoints=http`,
@@ -24,20 +33,18 @@ export function injectTraefikLabels(composeObj: any, config: any) {
     "traefik.docker.network=traefik-net"
   ];
 
-  // 3. CLEANUP: Strip legacy ports (The "Smart" part)
-  // We remove 'ports' because Traefik handles the external exposure.
+  // 4. CLEANUP: Strip legacy ports
   if (service.ports) {
-    console.log("Stripping legacy port mappings to ensure Traefik routing...");
     delete service.ports;
   }
 
-  // 4. Update Environment DOMAIN if it exists
+  // 5. Update Environment DOMAIN
   if (service.environment) {
     const updateDomain = (env: any) => {
       if (typeof env === 'object' && !Array.isArray(env)) {
         if (env.DOMAIN) env.DOMAIN = `https://${fullDomain}`;
       } else if (Array.isArray(env)) {
-        return env.map(item => {
+        return env.map((item: any) => {
           if (typeof item === 'string' && item.startsWith('DOMAIN=')) {
             return `DOMAIN=https://${fullDomain}`;
           }
@@ -49,7 +56,7 @@ export function injectTraefikLabels(composeObj: any, config: any) {
     service.environment = updateDomain(service.environment);
   }
 
-  // 5. Production Hardening
+  // 6. Production Hardening
   service.container_name = appName;
   service.hostname = appName;
   service.restart = "unless-stopped";
@@ -60,9 +67,9 @@ export function injectTraefikLabels(composeObj: any, config: any) {
   
   service.labels = labels;
   
-  // Network is handled by 'include' but we must ensure no local networks interfere
+  // Ensure no local networks interfere
   if (service.networks) delete service.networks;
-  if (composeObj.networks) delete composeObj.networks;
+  if (result.networks) delete result.networks;
   
-  return composeObj;
+  return result;
 }
