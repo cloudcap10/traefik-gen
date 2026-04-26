@@ -1,13 +1,25 @@
-# Dynamic configuration for A+ SSL rating
 http:
-  middlewares:
-    secure-headers:
+  middlewares:    
+    default-security-headers:
       headers:
-        sslRedirect: true
+        customBrowserXSSValue: 0
+        contentTypeNosniff: true
         forceSTSHeader: true
-        stsSeconds: 63072000
+        frameDeny: false
+        referrerPolicy: "strict-origin-when-cross-origin"
         stsIncludeSubdomains: true
         stsPreload: true
-        referrerPolicy: "same-origin"
-        browserXssFilter: true
-        contentTypeNosniff: true
+        stsSeconds: 3153600
+        contentSecurityPolicy: "default-src 'self'"     
+        customRequestHeaders:
+          X-Forwarded-Proto: https
+    https-redirectscheme:
+      redirectScheme:
+        scheme: https
+        permanent: true
+    # Added your production auth templates for reference
+    grist-basic-auth:
+      basicAuth:
+        headerField: "X-Forwarded-User"
+        users:
+          - "joven.talasan@gmail.com:$2y$05$XlJlJelSHROkdATS7z7LTuhZ21YwJCX8jfZOYnp6ss5cmTHdLzfXS"
