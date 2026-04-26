@@ -1,5 +1,6 @@
 import { ExternalLink } from 'lucide-react';
 import GeneratorUI from './components/GeneratorUI';
+import GettingStarted from './components/GettingStarted';
 
 function App() {
   return (
@@ -40,7 +41,8 @@ function App() {
         </div>
       </header>
 
-      <main className="flex-grow max-w-7xl mx-auto w-full p-6 flex flex-col overflow-hidden gap-4">
+      <main className="flex-grow max-w-7xl mx-auto w-full p-6 flex flex-col gap-4 overflow-y-auto">
+        <GettingStarted />
         <GeneratorUI />
       </main>
 

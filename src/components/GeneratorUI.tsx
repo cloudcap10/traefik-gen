@@ -12,21 +12,7 @@ import { pushToGitHub } from '../lib/github-client';
 
 const STORAGE_KEY = 'traefikgen-settings';
 
-const DEFAULT_INPUT = `services:
-  web:
-    image: nginx:latest
-    ports:
-      - "80:80"
-    environment:
-      DATABASE_PASSWORD: supersecretpassword
-      API_TOKEN: abc123def456
-      DEBUG: "true"
-  db:
-    image: postgres:16
-    environment:
-      POSTGRES_PASSWORD: mydbpassword
-      POSTGRES_USER: appuser
-`;
+const DEFAULT_INPUT = '';
 
 interface SavedSettings {
   domain: string;
@@ -352,7 +338,16 @@ export default function GeneratorUI() {
             value={inputYaml}
             onChange={(e) => setInputYaml(e.target.value)}
             className="flex-grow w-full p-4 font-mono text-sm focus:outline-none resize-none bg-white min-h-[280px] text-slate-800 placeholder-slate-300"
-            placeholder="Paste your docker-compose.yml here..."
+            placeholder={`Paste any docker-compose.yml here, e.g.:
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    ports:
+      - "80:80"
+    environment:
+      DOMAIN: https://vw.yourdomain.com
+      DATABASE_URL: postgresql://...`}
             spellCheck={false}
           />
         </div>
@@ -375,9 +370,9 @@ export default function GeneratorUI() {
                   )}
                 </>
               )}
-              {parseError && (
-                <span className="text-[10px] font-semibold bg-red-900 text-red-300 px-1.5 py-0.5 rounded-full">
-                  Parse error
+              {parseError && !outputYaml && (
+                <span className="text-[10px] font-semibold bg-slate-700 text-slate-400 px-1.5 py-0.5 rounded-full">
+                  Waiting…
                 </span>
               )}
             </div>
@@ -401,12 +396,17 @@ export default function GeneratorUI() {
             </div>
           </div>
           <div className="flex-grow overflow-auto p-4 min-h-[280px]">
-            {parseError ? (
-              <div className="text-red-400 font-mono text-sm whitespace-pre-wrap">
-                <span className="font-bold text-red-300">Error: </span>{parseError}
-              </div>
-            ) : (
+            {outputYaml ? (
               <pre className="text-emerald-300 font-mono text-sm whitespace-pre-wrap leading-relaxed">{outputYaml}</pre>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full min-h-[200px] text-center px-6 gap-3">
+                <div className="text-3xl">📋</div>
+                <p className="text-slate-400 text-sm font-medium">Paste your compose file on the left</p>
+                <p className="text-slate-500 text-xs leading-relaxed max-w-xs">
+                  The Traefik-ready version will appear here instantly —
+                  labels added, ports removed, secrets replaced with safe placeholders.
+                </p>
+              </div>
             )}
           </div>
         </div>
