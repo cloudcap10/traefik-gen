@@ -10,7 +10,7 @@ function App() {
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-xl">T</span>
             </div>
-            <h1 className="text-xl font-bold text-gray-900">TraefikGen</h1>
+            <h1 className="text-xl font-bold text-gray-900">TraefikGen <span className="text-xs bg-green-500 text-white px-2 py-0.5 rounded-full ml-2">PRO v2.0</span></h1>
           </div>
           <div className="text-sm text-gray-500 font-medium">
             Docker Compose to Traefik v3 Label Generator
