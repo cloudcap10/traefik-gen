@@ -2,7 +2,7 @@ export function injectTraefikLabels(composeObj: any, config: any) {
   const { appName, domain, port, resolver = 'cloudflare' } = config;
   const fullDomain = `${appName}.${domain}`;
   
-  // 1. Ensure Global include
+  // 1. Construct a fresh object to GUARANTEE 'include' is on the very first line
   const result: any = {
     include: ["../compose-common.yml"]
   };
@@ -37,26 +37,21 @@ export function injectTraefikLabels(composeObj: any, config: any) {
     delete service.ports;
   }
 
-  // 4. Update Environment DOMAIN to use the variable ${DOMAIN}
+  // 4. Update Environment DOMAIN
   if (service.environment) {
-    const updateDomain = (env: any) => {
-      if (typeof env === 'object' && !Array.isArray(env)) {
-        // Look for DOMAIN key case-insensitively
-        const domainKey = Object.keys(env).find(k => k.toUpperCase() === 'DOMAIN');
-        if (domainKey) {
-          env[domainKey] = "${DOMAIN}";
-        }
-      } else if (Array.isArray(env)) {
-        return env.map((item: any) => {
-          if (typeof item === 'string' && item.toUpperCase().startsWith('DOMAIN=')) {
-            return "DOMAIN=${DOMAIN}";
-          }
-          return item;
-        });
+    if (typeof service.environment === 'object' && !Array.isArray(service.environment)) {
+      const domainKey = Object.keys(service.environment).find(k => k.toUpperCase() === 'DOMAIN');
+      if (domainKey) {
+        service.environment[domainKey] = "${DOMAIN}";
       }
-      return env;
-    };
-    service.environment = updateDomain(service.environment);
+    } else if (Array.isArray(service.environment)) {
+      service.environment = service.environment.map((item: any) => {
+        if (typeof item === 'string' && item.toUpperCase().startsWith('DOMAIN=')) {
+          return "DOMAIN=${DOMAIN}";
+        }
+        return item;
+      });
+    }
   }
 
   // 5. Production Hardening
