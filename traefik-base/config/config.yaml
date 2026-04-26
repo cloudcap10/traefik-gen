@@ -17,9 +17,3 @@ http:
       redirectScheme:
         scheme: https
         permanent: true
-    grist-basic-auth:
-      basicAuth:
-        headerField: "X-Forwarded-User"
-        # Placeholder for security
-        users:
-          - "user:hashed_password_here"
