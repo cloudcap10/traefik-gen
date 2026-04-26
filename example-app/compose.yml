@@ -1,0 +1,22 @@
+include:
+  - ../compose-common.yml
+
+services:
+  example:
+    image: nginx:latest
+    container_name: example-app
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.example.entrypoints=http"
+      - "traefik.http.routers.example.rule=Host(`example.${DOMAIN}`)"
+      - "traefik.http.routers.example.middlewares=https-redirectscheme@file"
+      - "traefik.http.routers.example-secure.entrypoints=https"
+      - "traefik.http.routers.example-secure.rule=Host(`example.${DOMAIN}`)"
+      - "traefik.http.routers.example-secure.tls=true"
+      - "traefik.http.routers.example-secure.tls.certresolver=cloudflare"
+      - "traefik.http.routers.example-secure.middlewares=default-security-headers@file"
+      - "traefik.http.routers.example-secure.service=example"
+      - "traefik.http.services.example.loadbalancer.server.port=80"
